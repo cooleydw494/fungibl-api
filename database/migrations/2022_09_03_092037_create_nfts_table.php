@@ -14,12 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('nfts', function (Blueprint $table) {
-            $table->id();
-            $table->integer('asset_id');
+            $table->integer('asset_id')->primary();
             $table->string('name', 60);
             $table->string('collection_name', 60);
             $table->string('creator_wallet', 60);
             $table->string('meta_standard', 10);
+            $table->text('metadata')->nullable();
+            $table->string('ipfs_image_url');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -19,6 +19,8 @@ Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
 
 Route::middleware('auth:api')->group(static function () {
     Route::get('whoami', 'App\Http\Controllers\AuthController@whoami');
+
+    Route::post('nfts/{nft}/sync', 'App\Http\Controllers\NftController@sync');
 });
 
 

@@ -15,10 +15,10 @@ class Nft extends Model
     protected $guarded = [];
 
     /**
-     * @param object $nftData
+     * @param array $nftData
      * @return Nft
      */
-    public static function syncFromFrontend(object $nftData): static
+    public static function syncFromFrontend(array $nftData): static
     {
         /** @var static|null $nft */
         $nft = static::find($nftData['asset-id']);
@@ -28,23 +28,23 @@ class Nft extends Model
             /** @var static $nft */
             $nft = static::create([
                 'asset_id' => $nftData['asset-id'],
-                'name' => $nftData->params['name'],
-                'unit_name' => $nftData->params['unit-name'],
+                'name' => $nftData['params']['name'],
+                'unit_name' => $nftData['params']['unit-name'],
                 'collection_name' => 'TODO:collection_name',
-                'creator_wallet' => $nftData->params['creator'],
+                'creator_wallet' => $nftData['params']['creator'],
                 'meta_standard' => 'TODO:ms', // TODO
                 'metadata' => 'TODO:metadata', // TODO
-                'ipfs_image_url' => $nftData->imageUrl,
+                'ipfs_image_url' => $nftData['imageUrl'],
             ]);
         }
 
-        $imageChange = !$newNft && $nft->ipfs_image_url !== $nftData->imageUrl;
+        $imageChange = !$newNft && $nft->ipfs_image_url !== $nftData['imageUrl'];
         $metadataChange = !$newNft && $nft->metadata !== 'TODO:metadata'; // TODO
 
         if ($metadataChange || $imageChange) {
             $nft->update([
                 'metadata' => 'WIP',
-                'ipfs_image_url' => $nftData->imageUrl,
+                'ipfs_image_url' => $nftData['imageUrl'],
                 'image_cached' => ($nft->image_cached && !$imageChange),
             ]);
         }

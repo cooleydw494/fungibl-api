@@ -13,7 +13,6 @@ use ParagonIE\ConstantTime\Base64;
 use Rootsoft\Algorand\Models\Accounts\Address;
 use Rootsoft\Algorand\Models\Transactions\SignedTransaction;
 use Rootsoft\Algorand\Models\Transactions\Types\RawPaymentTransaction;
-//use Rootsoft\Algorand\Utils\Encoder;
 use App\Overrides\CustomEncoder;
 
 /**

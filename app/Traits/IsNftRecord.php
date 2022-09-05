@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use Illuminate\Http\File;
 use Image;
 use Storage;
 

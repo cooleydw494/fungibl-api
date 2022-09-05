@@ -10,5 +10,7 @@ class Nft extends Model
 {
     use HasFactory, IsNftRecord;
 
+    protected $primaryKey = 'asset_id';
+
     protected $guarded = [];
 }

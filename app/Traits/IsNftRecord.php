@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\File;
+use Image;
 use Storage;
 
 trait IsNftRecord {
@@ -19,9 +21,10 @@ trait IsNftRecord {
      */
     public function cacheImage(): bool|string
     {
-        $file = file_get_contents($this->ipfs_image_url);
+        $image = Image::make($this->ipfs_image_url);
+        $image->encode('png');
         return Storage::disk('s3')
-               ->putFile($this->imagePath(), $file, 'public');
+               ->put($this->imagePath() . '.png', $image->stream());
     }
 
     /**
@@ -37,6 +40,6 @@ trait IsNftRecord {
      */
     public function imagePath(): string
     {
-        return config('filesystems.s3.img_path') . $this->asset_id;
+        return config('filesystems.disks.s3.img_path') . $this->asset_id;
     }
 }

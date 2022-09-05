@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('nfts', function (Blueprint $table) {
             $table->integer('asset_id')->primary();
             $table->string('name', 60);
+            $table->string('unit_name', 60);
             $table->string('collection_name', 60);
             $table->string('creator_wallet', 60);
             $table->string('meta_standard', 10);
             $table->text('metadata')->nullable();
             $table->string('ipfs_image_url');
+            $table->boolean('image_cached')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -16,11 +16,13 @@ namespace App\Models{
  *
  * @property int $asset_id
  * @property string $name
+ * @property string $unit_name
  * @property string $collection_name
  * @property string $creator_wallet
  * @property string $meta_standard
  * @property string|null $metadata
  * @property string $ipfs_image_url
+ * @property int $image_cached
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -32,10 +34,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatorWallet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereImageCached($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereIpfsImageUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereMetaStandard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereMetadata($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUnitName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUpdatedAt($value)
  */
 	class Nft extends \Eloquent {}

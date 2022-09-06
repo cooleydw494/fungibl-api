@@ -13,6 +13,9 @@ class PoolNft extends Model
 
     protected $guarded = [];
 
+    protected $primaryKey = 'asset_id';
+    public $incrementing = false;
+
     /**
      * Add an NFT to the pool_nfts table to represent its presence in the
      * Fungibl App NFT pool. First make sure the NFT is synced and updated in

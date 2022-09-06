@@ -21,7 +21,7 @@ class NftController extends Controller
     {
         foreach ($request->nfts as $nftData) {
             try {
-                $nft = Nft::syncFromFrontend($nftData);
+                $nft = Nft::syncFromFrontend(null, $nftData);
                 $nft->image_cached ?: $needsCaching[] = $nft->asset_id;
             } catch (Exception $exception) {
                 info($exception->getMessage());

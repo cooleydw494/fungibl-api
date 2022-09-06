@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('meta_standard', 10);
             $table->text('metadata')->nullable();
             $table->string('ipfs_image_url');
-            $table->boolean('image_cached')->default(0);
+            $table->boolean('image_cached')->default(0)->nullable();
             $table->boolean('in_pool')->default(1);
             $table->integer('submit_est_algo');
             $table->string('submit_algorand_address', 60);

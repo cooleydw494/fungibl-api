@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\IsNftRecord;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,13 +16,27 @@ class Nft extends Model
     protected $guarded = [];
 
     /**
-     * @param array $nftData
+     * @param Nft|null   $nft
+     * @param array|null $nftData
      * @return Nft
+     * @throws Exception
      */
-    public static function syncFromFrontend(array $nftData): static
+    public static function syncFromFrontend(
+        ?Nft $nft = null,
+        ?array $nftData = null
+    ): static
     {
+        // If neither are passed in, throw exception
+        $passedNft = ! is_null($nft);
+        $passedNftData = ! is_null($nftData);
+        if (!$passedNft && !$passedNftData) {
+            throw new Exception(
+                'syncFromFrontend cannot be called without nftData or nft set'
+            );
+        }
+
         /** @var static|null $nft */
-        $nft = static::find($nftData['asset-id']);
+        $nft = $passedNft ? $nft : static::find($nftData['asset-id']);
         $newNft = is_null($nft);
 
         if ($newNft) {
@@ -35,6 +50,7 @@ class Nft extends Model
                 'meta_standard' => 'TODO:ms', // TODO
                 'metadata' => 'TODO:metadata', // TODO
                 'ipfs_image_url' => $nftData['imageUrl'],
+                'image_cached' => false,
             ]);
         }
 
@@ -50,5 +66,32 @@ class Nft extends Model
         }
 
         return $nft;
+    }
+
+    /**
+     * If no arguments passed, gets current estimated value in $ALGO
+     *
+     * If $previousEstimate is passed in check it represents a previous estimate
+     * shared with the user. If that estimate has change more than $tolerance %
+     * return false and handle outside this function
+     *
+     * @param float|null $previousEstimate
+     * @param int|null   $tolerance
+     * @return float|bool
+     */
+    public function estimateValue(
+        ?float $previousEstimate = null,
+        ?int $tolerance = 10
+    ): float|bool
+    {
+        // TODO: replace below with actual current estimation logic
+        $currentEstimate = $previousEstimate;
+        if (is_null($previousEstimate)) {
+            return $currentEstimate;
+        }
+        if (abs($previousEstimate/$currentEstimate) > $tolerance) {
+            return false;
+        }
+        return $currentEstimate;
     }
 }

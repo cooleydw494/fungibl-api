@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('meta_standard', 10);
             $table->text('metadata')->nullable();
             $table->string('ipfs_image_url');
-            $table->boolean('image_cached')->default(0);
+            $table->boolean('image_cached')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

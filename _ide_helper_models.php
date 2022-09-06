@@ -22,7 +22,7 @@ namespace App\Models{
  * @property string $meta_standard
  * @property string|null $metadata
  * @property string $ipfs_image_url
- * @property int $image_cached
+ * @property int|null $image_cached
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -43,6 +43,55 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUpdatedAt($value)
  */
 	class Nft extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\PoolNft
+ *
+ * @property int $asset_id
+ * @property string $name
+ * @property string $unit_name
+ * @property string $collection_name
+ * @property string $creator_wallet
+ * @property string $meta_standard
+ * @property string|null $metadata
+ * @property string $ipfs_image_url
+ * @property int|null $image_cached
+ * @property int $in_pool
+ * @property int $submit_est_algo
+ * @property string $submit_algorand_address
+ * @property int $submit_iteration
+ * @property int|null $pull_est_algo
+ * @property string|null $pulled_at
+ * @property string|null $pull_algorand_address
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCollectionName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatorWallet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereImageCached($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereInPool($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereIpfsImageUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereMetaStandard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereMetadata($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePullAlgorandAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePullEstAlgo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePulledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitAlgorandAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitEstAlgo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitIteration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUnitName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUpdatedAt($value)
+ */
+	class PoolNft extends \Eloquent {}
 }
 
 namespace App\Models{

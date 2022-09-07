@@ -2,9 +2,8 @@
 
 namespace App\Traits;
 
-use App\Models\Nft;
 use Image;
-use PHPUnit\Exception;
+use Intervention\Image\Exception\NotReadableException;
 use Storage;
 
 trait IsNftRecord {
@@ -23,12 +22,13 @@ trait IsNftRecord {
     public function cacheImage(): bool|string
     {
         $this->update(['image_cached' => null]); // null === unresolved attempt
+        info(ini_get('allow_url_fopen'));
         try {
             $image = Image::make($this->ipfs_image_url);
             $image->encode('png');
             $result = Storage::disk('s3')
                              ->put($this->imagePath() . '.png', $image->stream());
-        } catch (Exception $exception) {
+        } catch (NotReadableException $exception) {
             info($exception->getMessage());
             info($exception->getTraceAsString());
             $result = false;

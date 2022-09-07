@@ -59,10 +59,12 @@ class Nft extends Model
         $metadataChange = !$newNft && $nft->metadata !== 'TODO:metadata'; // TODO
 
         if ($metadataChange || $imageChange) {
+            $needsCaching = ! ($nft->image_cached && !$imageChange);
             $nft->update([
                 'metadata' => 'WIP',
                 'ipfs_image_url' => $nftData['imageUrl'],
-                'image_cached' => ($nft->image_cached && !$imageChange),
+                'image_cached' => ! $needsCaching,
+                'cache_tries' => $needsCaching ? 0 : $nft->cache_tries,
             ]);
         }
 
@@ -76,14 +78,14 @@ class Nft extends Model
      * shared with the user. If that estimate has change more than $tolerance %
      * return false and handle outside this function
      *
-     * @param float|null $previousEstimate
+     * @param int|null $previousEstimate
      * @param int|null   $tolerance
      * @return float|bool
      */
     public function estimateValue(
-        ?float $previousEstimate = null,
+        ?int $previousEstimate = null,
         ?int $tolerance = 10
-    ): float|bool
+    ): int|bool
     {
         // TODO: replace below with actual current estimation logic
         $currentEstimate = $previousEstimate;
@@ -93,6 +95,8 @@ class Nft extends Model
         if (abs($previousEstimate/$currentEstimate) > $tolerance) {
             return false;
         }
-        return $currentEstimate;
+        // We always round down on estimates/rewards, we like to keep things
+        // neat and this defaults in favor of $FUN holders.
+        return intval(floor($currentEstimate));
     }
 }

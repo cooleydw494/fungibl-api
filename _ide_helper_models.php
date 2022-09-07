@@ -23,6 +23,7 @@ namespace App\Models{
  * @property string|null $metadata
  * @property string $ipfs_image_url
  * @property int|null $image_cached
+ * @property int $cache_tries
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -30,6 +31,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Nft newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Nft query()
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCacheTries($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCollectionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatorWallet($value)
@@ -47,6 +49,61 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\PoolMeta
+ *
+ * @property int $current_nft_count
+ * @property int $current_pool_value
+ * @property int $current_avg_reward
+ * @property int $current_pull_cost
+ * @property int $starting_nft_count
+ * @property int $starting_pool_value
+ * @property int $starting_avg_reward
+ * @property int $starting_pull_cost
+ * @property int $lowest_nft_count
+ * @property int $lowest_pool_value
+ * @property int $lowest_avg_reward
+ * @property int $lowest_pull_cost
+ * @property int $highest_nft_count
+ * @property int $highest_pool_value
+ * @property int $highest_avg_reward
+ * @property int $highest_pull_cost
+ * @property int $app_supply_fun
+ * @property int $llc_supply_fun
+ * @property int $beta_supply_fun
+ * @property int $public_supply_fun
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereAppSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereBetaSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereHighestAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereHighestNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereHighestPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereHighestPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLlcSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLowestAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLowestNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLowestPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLowestPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta wherePublicSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereStartingAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereStartingNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereStartingPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereStartingPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereUpdatedAt($value)
+ */
+	class PoolMeta extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\PoolNft
  *
  * @property int $asset_id
@@ -58,13 +115,17 @@ namespace App\Models{
  * @property string|null $metadata
  * @property string $ipfs_image_url
  * @property int|null $image_cached
+ * @property int $cache_tries
  * @property int $in_pool
+ * @property int $current_est_algo
  * @property int $submit_est_algo
+ * @property int $submit_reward_fun
  * @property string $submit_algorand_address
  * @property int $submit_iteration
  * @property int|null $pull_est_algo
- * @property string|null $pulled_at
+ * @property int|null $pull_cost_fun
  * @property string|null $pull_algorand_address
+ * @property string|null $pulled_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -72,9 +133,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft query()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCacheTries($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCollectionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatorWallet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCurrentEstAlgo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereImageCached($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereInPool($value)
@@ -83,11 +146,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereMetadata($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePullAlgorandAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePullCostFun($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePullEstAlgo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft wherePulledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitAlgorandAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitEstAlgo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitIteration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitRewardFun($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUnitName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUpdatedAt($value)
  */

@@ -4,7 +4,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 9.27.0.
+ * Generated for Laravel 9.28.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1495,6 +1495,52 @@
         {            //Method inherited from \Illuminate\Container\Container         
                         /** @var \Illuminate\Foundation\Application $instance */
                         $instance->offsetUnset($key);
+        }
+                    /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @return void 
+         * @static 
+         */ 
+        public static function macro($name, $macro)
+        {
+                        \Illuminate\Foundation\Application::macro($name, $macro);
+        }
+                    /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void 
+         * @throws \ReflectionException
+         * @static 
+         */ 
+        public static function mixin($mixin, $replace = true)
+        {
+                        \Illuminate\Foundation\Application::mixin($mixin, $replace);
+        }
+                    /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasMacro($name)
+        {
+                        return \Illuminate\Foundation\Application::hasMacro($name);
+        }
+                    /**
+         * Flush the existing macros.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function flushMacros()
+        {
+                        \Illuminate\Foundation\Application::flushMacros();
         }
          
     }
@@ -7428,7 +7474,7 @@
                     /**
          * Register a stub callable that will intercept requests and be able to return stub responses.
          *
-         * @param callable|array $callback
+         * @param callable|array|null $callback
          * @return \Illuminate\Http\Client\Factory 
          * @static 
          */ 
@@ -9801,18 +9847,6 @@
                         return $instance->intended($default, $status, $headers, $secure);
         }
                     /**
-         * Set the intended url.
-         *
-         * @param string $url
-         * @return \Illuminate\Routing\Redirector 
-         * @static 
-         */ 
-        public static function setIntendedUrl($url)
-        {
-                        /** @var \Illuminate\Routing\Redirector $instance */
-                        return $instance->setIntendedUrl($url);
-        }
-                    /**
          * Create a new redirect response to the given path.
          *
          * @param string $path
@@ -9939,6 +9973,29 @@
         {
                         /** @var \Illuminate\Routing\Redirector $instance */
                         $instance->setSession($session);
+        }
+                    /**
+         * Get the "intended" URL from the session.
+         *
+         * @return string|null 
+         * @static 
+         */ 
+        public static function getIntendedUrl()
+        {
+                        /** @var \Illuminate\Routing\Redirector $instance */
+                        return $instance->getIntendedUrl();
+        }
+                    /**
+         * Set the "intended" URL in the session.
+         *
+         * @param string $url
+         * @return \Illuminate\Routing\Redirector 
+         * @static 
+         */ 
+        public static function setIntendedUrl($url)
+        {
+                        /** @var \Illuminate\Routing\Redirector $instance */
+                        return $instance->setIntendedUrl($url);
         }
                     /**
          * Register a custom macro.
@@ -21338,7 +21395,7 @@ namespace  {
                 /**
              * Add a union statement to the query.
              *
-             * @param \Illuminate\Database\Query\Builder|\Closure $query
+             * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
              * @param bool $all
              * @return \Illuminate\Database\Query\Builder 
              * @static 
@@ -21352,7 +21409,7 @@ namespace  {
                 /**
              * Add a union all statement to the query.
              *
-             * @param \Illuminate\Database\Query\Builder|\Closure $query
+             * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
              * @return \Illuminate\Database\Query\Builder 
              * @static 
              */ 

@@ -24,12 +24,15 @@ return new class extends Migration
             $table->string('ipfs_image_url');
             $table->boolean('image_cached')->default(0)->nullable();
             $table->boolean('in_pool')->default(1);
+            $table->integer('current_est_algo');
             $table->integer('submit_est_algo');
+            $table->integer('submit_reward_fun');
             $table->string('submit_algorand_address', 60);
             $table->integer('submit_iteration')->default(1);
             $table->integer('pull_est_algo')->nullable();
-            $table->timestamp('pulled_at')->nullable();
+            $table->integer('pull_cost_fun')->nullable();
             $table->string('pull_algorand_address', 60)->nullable();
+            $table->timestamp('pulled_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -29,9 +29,14 @@ class CacheUncachedImages extends Command
      */
     public function handle(): int
     {
-        $uncachedNfts = Nft::where('image_cached', false)->get();
-        $uncachedPoolNfts = PoolNft::where('image_cached', false)->get();
-        $uncachedPoolNftIds = $uncachedPoolNfts->pluck('asset_id')->toArray();
+        $uncachedNfts = Nft::where('image_cached', false)
+                           ->where('cache_tries', '<', 3)
+                           ->get();
+        $uncachedPoolNfts = PoolNft::where('image_cached', false)
+                                   ->where('cache_tries', '<', 3)
+                                   ->get();
+        $uncachedPoolNftIds = $uncachedPoolNfts->pluck('asset_id')
+                                               ->toArray();
         $poolNftsJustCached = [];
 
         $uncachedNfts->each(static function (Nft $nft)

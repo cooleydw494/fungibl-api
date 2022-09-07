@@ -37,6 +37,7 @@ return new class extends Migration
             $table->unsignedInteger('highest_pull_cost');
 
             $table->unsignedInteger('app_supply_fun');
+            $table->unsignedInteger('circulating_supply_fun');
             $table->unsignedInteger('llc_supply_fun');
             $table->unsignedInteger('beta_supply_fun');
             $table->unsignedInteger('public_supply_fun');
@@ -68,6 +69,7 @@ return new class extends Migration
             'highest_pull_cost' => 0,
 
             'app_supply_fun' => 750000000,
+            'circulating_supply_fun' => 250000000,
             'llc_supply_fun' => 200000000,
             'beta_supply_fun' => 50000000,
             'public_supply_fun' => 0,

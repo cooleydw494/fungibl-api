@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Models\Nft;
+use App\Models\PoolNft;
 use Image;
 use Intervention\Image\Exception\NotReadableException;
 use Storage;
@@ -22,18 +24,25 @@ trait IsNftRecord {
     public function cacheImage(): bool|string
     {
         $this->update(['image_cached' => null]); // null === unresolved attempt
-        info(ini_get('allow_url_fopen'));
         try {
             $image = Image::make($this->ipfs_image_url);
             $image->encode('png');
             $result = Storage::disk('s3')
-                             ->put($this->imagePath() . '.png', $image->stream());
+                             ->put($this->imagePath('.png'), $image->stream());
         } catch (NotReadableException $exception) {
             info($exception->getMessage());
             info($exception->getTraceAsString());
             $result = false;
         }
         $this->update(['image_cached' => (bool)$result]);
+        if ($result) {
+            (static::class === Nft::class ? PoolNft::query() : Nft::query())
+                ->where('asset_id', $this->asset_id)
+                ->update([
+                    'image_cached' => (bool)$result,
+                    'ipfs_image_url' => $this->ipfs_image_url, // just in case
+                ]);
+        }
         return $result;
     }
 
@@ -46,11 +55,12 @@ trait IsNftRecord {
     }
 
     /**
+     * @param string|null $ext
      * @return string
      */
-    public function imagePath(): string
+    public function imagePath(?string $ext = ''): string
     {
-        return config('filesystems.disks.s3.img_path') . $this->asset_id;
+        return config('filesystems.disks.s3.img_path').$this->asset_id.$ext;
     }
 
 //    public function getNft()

@@ -34,7 +34,8 @@ class PoolNft extends Model
         // TODO: remove this, it is ONLY for minting testnet seeded NFT pool
         $frontendEstimate = rand(10, 250);
         $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
-        $submitReward = static::calculateReward($estimatedAlgo);
+        $submitReward = 0;// TODO: replace with comment below after seeding
+        // $submitReward = static::calculateReward($estimatedAlgo);
         return PoolNft::create([
             ...$nft->only([
                 'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
@@ -71,18 +72,19 @@ class PoolNft extends Model
     }
 
     /**
-     * @param int|null $publicSupply
+     * @param int|null $circulatingSupply
      * @param int|null $poolCount
      * @return int
      */
-    public static function calculatePullCost(?int $publicSupply = null, ?int $poolCount = null): int
+    public static function calculatePullCost(?int $circulatingSupply = null,
+                                             ?int $poolCount = null): int
     {
-        if (is_null($publicSupply) || is_null($poolCount)) {
+        if (is_null($circulatingSupply) || is_null($poolCount)) {
             $c = PoolMeta::get();
         }
-        $publicSupply = $publicSupply ?? $c['public_supply_fun'];
+        $circulatingSupply = $circulatingSupply ?? $c['public_supply_fun'];
         $poolCount = $poolCount ?? $c['current_pool_count'];
         // Cost always rounds up to default in bias of pool solvency
-        return intval(ceil($publicSupply / $poolCount));
+        return intval(ceil($circulatingSupply / $poolCount));
     }
 }

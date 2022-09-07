@@ -29,10 +29,12 @@ class NftController extends Controller
                 info($exception->getTraceAsString());
             }
         }
-        $addToPoolResponse = $this->addToPool($request);
+        // NOTE: addToPool call here is for connecting the Fungibl App wallet
+        //       for initialization of the pool. That's all. Never again.
+//        $addToPoolResponse = $this->addToPool($request);
         return response()->json([
             'success' => ':)', 'needs_caching' => $needsCaching ?? [],
-            'add_to_pool_response' => $addToPoolResponse,
+//            'add_to_pool_response' => $addToPoolResponse,
         ]);
     }
 

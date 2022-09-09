@@ -25,4 +25,6 @@ Route::middleware('auth:api')->group(static function () {
     Route::post('nfts/sync', 'App\Http\Controllers\NftController@sync');
     Route::post('nfts/{assetId}/cache-image', 'App\Http\Controllers\NftController@cacheImage');
     Route::post('nfts/add-to-pool', 'App\Http\Controllers\NftController@addToPool');
+    Route::get('random-contract-info', 'App\Http\Controllers\NftController@randomContractInfo');
+//    Route::post('nfts/{assetId}/pulled', 'App\Http\Controllers\NftController@markPulled');
 });

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\IsNftRecord;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,6 +59,20 @@ class PoolNft extends Model
 //        );
 
         return $poolNft;
+    }
+
+    /**
+     * @return void
+     */
+    public function markPulled(): void
+    {
+        $this->update([
+            'in_pool' => false,
+            'pull_est_algo' => $this->submit_est_algo,
+            'pull_cost_fun' => self::calculatePullCost(),
+            'pulled_at' => Carbon::now(),
+        ]);
+        $this->delete();
     }
 
     /**

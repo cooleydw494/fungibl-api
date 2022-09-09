@@ -61,6 +61,35 @@ class NftController extends Controller
 
     /**
      * @param Request $request
+     * @return JsonResponse
+     */
+    public function randomContractInfo(Request $request): JsonResponse
+    {
+        /** @var PoolNft $poolNft */
+        $poolNft = PoolNft::inRandomOrder()->first();
+        $poolNft->markPulled();
+        return response()->json([
+            'success' => ':)',
+            'contract_info' => $poolNft->contract_info,
+            'finalized_pull_cost' => $poolNft->pull_cost_fun,
+        ]);
+    }
+
+    // TODO: will probably need to split this off when implementing a secure way of pulling
+//    /**
+//     * @param Request $request
+//     * @param int     $assetId
+//     * @return JsonResponse
+//     */
+//    public function markPulled(Request $request, int $assetId): JsonResponse
+//    {
+//        $poolNft = PoolNft::findOrFail($assetId);
+//        $poolNft->markPulled();
+//        return response()->json(['success' => ':)']);
+//    }
+
+    /**
+     * @param Request $request
      * @param int     $assetId
      * @return JsonResponse
      */

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->integer('submit_reward_fun');
             $table->string('submit_algorand_address', 60);
             $table->integer('submit_iteration')->default(1);
+            $table->text('contract_info');
             $table->integer('pull_est_algo')->nullable();
             $table->integer('pull_cost_fun')->nullable();
             $table->string('pull_algorand_address', 60)->nullable();

@@ -14,6 +14,6 @@ class PoolMetaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        return response()->json(['metas' => PoolMeta::get()]);
+        return response()->json(['pool_metas' => PoolMeta::get()]);
     }
 }

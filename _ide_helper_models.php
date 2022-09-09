@@ -68,6 +68,7 @@ namespace App\Models{
  * @property int $highest_avg_reward
  * @property int $highest_pull_cost
  * @property int $app_supply_fun
+ * @property int $circulating_supply_fun
  * @property int $llc_supply_fun
  * @property int $beta_supply_fun
  * @property int $public_supply_fun
@@ -78,6 +79,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta query()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereAppSupplyFun($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereBetaSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCirculatingSupplyFun($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentAvgReward($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereCurrentNftCount($value)
@@ -122,6 +124,7 @@ namespace App\Models{
  * @property int $submit_reward_fun
  * @property string $submit_algorand_address
  * @property int $submit_iteration
+ * @property string|null $contract_info
  * @property int|null $pull_est_algo
  * @property int|null $pull_cost_fun
  * @property string|null $pull_algorand_address
@@ -135,6 +138,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereAssetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCacheTries($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCollectionName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereContractInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatorWallet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCurrentEstAlgo($value)

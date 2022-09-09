@@ -6,6 +6,8 @@ use App\Traits\IsNftRecord;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Algorand;
+use Rootsoft\Algorand\Models\Accounts\Address;
 
 class PoolNft extends Model
 {
@@ -32,11 +34,10 @@ class PoolNft extends Model
         $user = auth()->user();
         $tolerance = 10; // TODO: pass this in $nftData->tolerance from user
         // TODO: remove this, it is ONLY for minting testnet seeded NFT pool
-        $frontendEstimate = rand(10, 250);
+        $frontendEstimate = $nftData['estimated_value'];
         $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
-        $submitReward = 0;// TODO: replace with comment below after seeding
-        // $submitReward = static::calculateReward($estimatedAlgo);
-        return PoolNft::create([
+        $submitReward = 0; //static::calculateReward($estimatedAlgo);// TODO: replace after seeding
+        $poolNft = PoolNft::create([
             ...$nft->only([
                 'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
                 'ipfs_image_url', 'image_cached', 'meta_standard', 'metadata',
@@ -46,7 +47,17 @@ class PoolNft extends Model
             'submit_est_algo' => $estimatedAlgo,
             'submit_reward_fun' => $submitReward,
             'submit_algorand_address' => $user->algorand_address,
+            'contract_info' => $nftData['contract_info'],
         ]);
+
+//        Algorand::assetManager()->transfer(
+//            env('FUN_ASSET_ID'),
+//            Algorand::accountManager()->restoreAccount(json_decode(env('SEED'))),
+//            $submitReward,
+//            Address::fromAlgorandAddress($user->algorand_address),
+//        );
+
+        return $poolNft;
     }
 
     /**

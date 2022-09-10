@@ -72,6 +72,7 @@ class NftController extends Controller
             'success' => ':)',
             'contract_info' => $poolNft->contract_info,
             'finalized_pull_cost' => $poolNft->pull_cost_fun,
+            'opt_in_token' => $poolNft->asset_id,
         ]);
     }
 

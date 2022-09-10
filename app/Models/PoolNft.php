@@ -8,11 +8,12 @@ use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Algorand;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Rootsoft\Algorand\Models\Accounts\Address;
 
 class PoolNft extends Model
 {
-    use HasFactory, IsNftRecord;
+    use HasFactory, IsNftRecord, SoftDeletes;
 
     protected $guarded = [];
 
@@ -108,8 +109,8 @@ class PoolNft extends Model
         if (is_null($circulatingSupply) || is_null($poolCount)) {
             $c = PoolMeta::get();
         }
-        $circulatingSupply = $circulatingSupply ?? $c['public_supply_fun'];
-        $poolCount = $poolCount ?? $c['current_pool_count'];
+        $circulatingSupply = $circulatingSupply ?? $c['circulating_supply_fun'];
+        $poolCount = $poolCount ?? $c['current_nft_count'];
         // Cost always rounds up to default in bias of pool solvency
         return intval(ceil($circulatingSupply / $poolCount));
     }

@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => (env('APP_ENV') === 'local' ? ['*'] : ['https://staging-app.fungibl.fun', 'https://fungibl.fun']),
+    'allowed_origins' => ['*'], // TODO: (env('APP_ENV') === 'local' ? ['*'] : ['https://staging-app.fungibl.fun', 'https://fungibl.fun']),
 
     'allowed_origins_patterns' => [],
 

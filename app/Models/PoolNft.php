@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Algorand;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Rootsoft\Algorand\Models\Accounts\Address;
+use DB;
 
 class PoolNft extends Model
 {
@@ -38,7 +39,12 @@ class PoolNft extends Model
         // TODO: remove this, it is ONLY for minting testnet seeded NFT pool
         $frontendEstimate = $nftData['estimated_value'];
         $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
-        $submitReward = 0; //static::calculateReward($estimatedAlgo);// TODO: replace after seeding
+        $submitReward = static::calculateReward($estimatedAlgo);
+        $submitIteration = (DB::table('pool_nfts')
+                             ->select('submit_iteration')
+                             ->where('asset_id', $nft->asset_id)
+                             ->latest()
+                             ->first()->submit_iteration ?? 0) + 1;
         $poolNft = PoolNft::create([
             ...$nft->only([
                 'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
@@ -50,14 +56,15 @@ class PoolNft extends Model
             'submit_reward_fun' => $submitReward,
             'submit_algorand_address' => $user->algorand_address,
             'contract_info' => $nftData['contract_info'],
+            'submit_iteration' => $submitIteration,
         ]);
 
-//        Algorand::assetManager()->transfer(
-//            env('FUN_ASSET_ID'),
-//            Algorand::accountManager()->restoreAccount(json_decode(env('SEED'))),
-//            $submitReward,
-//            Address::fromAlgorandAddress($user->algorand_address),
-//        );
+        Algorand::assetManager()->transfer(
+            env('FUN_ASSET_ID'),
+            Algorand::accountManager()->restoreAccount(json_decode(env('SEED'))),
+            $submitReward,
+            Address::fromAlgorandAddress($user->algorand_address),
+        );
 
         return $poolNft;
     }
@@ -67,6 +74,7 @@ class PoolNft extends Model
      */
     public function markPulled(): void
     {
+        info(self::calculatePullCost());
         $this->update([
             'in_pool' => false,
             'pull_est_algo' => $this->submit_est_algo,
@@ -106,11 +114,15 @@ class PoolNft extends Model
     public static function calculatePullCost(?int $circulatingSupply = null,
                                              ?int $poolCount = null): int
     {
+        info($circulatingSupply);
+        info($poolCount);
         if (is_null($circulatingSupply) || is_null($poolCount)) {
             $c = PoolMeta::get();
         }
         $circulatingSupply = $circulatingSupply ?? $c['circulating_supply_fun'];
         $poolCount = $poolCount ?? $c['current_nft_count'];
+        info($circulatingSupply);
+        info($poolCount);
         // Cost always rounds up to default in bias of pool solvency
         return intval(ceil($circulatingSupply / $poolCount));
     }

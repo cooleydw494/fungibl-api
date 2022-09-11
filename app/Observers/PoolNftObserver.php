@@ -58,6 +58,7 @@ class PoolNftObserver
         $newAvgReward = PoolNft::calculateReward($newAvgNftVal);
         $updates['app_supply_fun'] = $newAppSupply;
         $updates['public_supply_fun'] = $newPublicSupply;
+        $updates['circulating_supply_fun'] = $newCirculatingSupply;
         $updates['current_pull_cost'] = $newPullCost;
         $updates['current_avg_reward'] = $newAvgReward;
 
@@ -120,12 +121,13 @@ class PoolNftObserver
 
         $newAppSupply = $c['app_supply_fun'] + $poolNft->pull_cost_fun;
         $newPublicSupply = $c['public_supply_fun'] - $poolNft->pull_cost_fun;
-        $newCirculatingSupply = $c['circulating_supply_fun'] + $poolNft->submit_reward_fun;
+        $newCirculatingSupply = $c['circulating_supply_fun'] - $poolNft->pull_cost_fun;
         $newPullCost = PoolNft::calculatePullCost($newCirculatingSupply, $newNftCount);
         $newAvgNftVal = $newPoolValue / $newNftCount;
         $newAvgReward = PoolNft::calculateReward($newAvgNftVal);
         $updates['app_supply_fun'] = $newAppSupply;
         $updates['public_supply_fun'] = $newPublicSupply;
+        $updates['circulating_supply_fun'] = $newCirculatingSupply;
         $updates['current_pull_cost'] = $newPullCost;
         $updates['current_avg_reward'] = $newAvgReward;
 

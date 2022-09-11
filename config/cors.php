@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', '*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'], // TODO: (env('APP_ENV') === 'local' ? ['*'] : ['https://staging-app.fungibl.fun', 'https://fungibl.fun']),
+    'allowed_origins' => (env('APP_ENV') === 'local' ? ['*'] : "*.fungibl.fun"),
 
     'allowed_origins_patterns' => [],
 

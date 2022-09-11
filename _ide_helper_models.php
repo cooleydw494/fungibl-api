@@ -117,26 +117,25 @@ namespace App\Models{
  * @property string|null $metadata
  * @property string $ipfs_image_url
  * @property int|null $image_cached
- * @property int $cache_tries
  * @property int $in_pool
  * @property int $current_est_algo
  * @property int $submit_est_algo
  * @property int $submit_reward_fun
  * @property string $submit_algorand_address
  * @property int $submit_iteration
- * @property string|null $contract_info
+ * @property string $contract_info
  * @property int|null $pull_est_algo
  * @property int|null $pull_cost_fun
  * @property string|null $pull_algorand_address
  * @property string|null $pulled_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft newQuery()
+ * @method static \Illuminate\Database\Query\Builder|PoolNft onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft query()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCacheTries($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCollectionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereContractInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatedAt($value)
@@ -159,6 +158,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereSubmitRewardFun($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUnitName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|PoolNft withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|PoolNft withoutTrashed()
  */
 	class PoolNft extends \Eloquent {}
 }

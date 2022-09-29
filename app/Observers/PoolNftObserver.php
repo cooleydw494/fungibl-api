@@ -86,7 +86,13 @@ class PoolNftObserver
      */
     public function updated(PoolNft $poolNft): void
     {
-        //
+        if ($poolNft->isDirty('current_est_algo')) {
+            $oldEstAlgo = $poolNft->getOriginal('current_est_algo');
+            $estAlgoDelta = $poolNft->current_est_algo - $oldEstAlgo;
+            PoolMeta::doIncrements(['current_pool_value' => $estAlgoDelta]);
+            // TODO: maybe figure out how to safely update the avg reward here
+            // but consider that this is done in large batches one by one
+        }
     }
 
     /**

@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'asalytic' => [
+        'api_key' => env('ASALYTIC_API_KEY'),
+        'api_url' => env('ASALYTIC_API_URL'),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

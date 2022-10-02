@@ -123,14 +123,15 @@ class Nft extends Model
         ?int $tolerance = 10
     ): int|bool
     {
-        try {
-            $currentEstimate = Asalytic::estimatedPrice($this->asset_id)
-                    ->price_estimate ?? 0;
-        } catch (GuzzleException $exception) {
-            info('Guzzle Exception in estimateValue: ' . $exception->getMessage());
-            info($exception->getTraceAsString());
-            $currentEstimate = $previousEstimate;
-        }
+        $currentEstimate = $previousEstimate; // TODO: replace with below when ready
+//        try {
+//            $currentEstimate = Asalytic::estimatedPrice($this->asset_id)
+//                    ->price_estimate ?? 0;
+//        } catch (GuzzleException $exception) {
+//            info('Guzzle Exception in estimateValue: ' . $exception->getMessage());
+//            info($exception->getTraceAsString());
+//            $currentEstimate = $previousEstimate;
+//        }
         if (is_null($previousEstimate)) {
             return $currentEstimate;
         }

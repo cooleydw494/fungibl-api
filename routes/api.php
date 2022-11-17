@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('auth/request-challenge/{address}', 'App\Http\Controllers\AuthController@requestChallenge');
 Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
 Route::get('pool-metas', 'App\Http\Controllers\PoolMetaController@index');
+Route::post('process-contact-form', 'App\Http\Controllers\MarketingController@processContactForm');
 
 Route::middleware('auth:api')->group(static function () {
     Route::get('whoami', 'App\Http\Controllers\AuthController@whoami');

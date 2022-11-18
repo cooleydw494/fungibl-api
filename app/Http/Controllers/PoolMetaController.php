@@ -27,19 +27,15 @@ class PoolMetaController extends Controller
      */
     public function getLogs(Request $request): JsonResponse
     {
-        $start = Carbon::now();
-        $start = match ($request->input('duration')) {
-            '30m' => $start->subMinutes(30),
-            '1h' => $start->subHour(),
-            '12h' => $start->subHours(12),
-            '1d' => $start->subDay(),
-            '7d' => $start->subDays(7),
-            '30d' => $start->subDays(30),
-            default => $start->subDay(),
-        };
-        $logs = PoolMetaLog::where('created_at', '>=', $start)
+        $start = PoolMetaLog::getDurationStart($request->input('duration'));
+        $logs = PoolMetaLog::where('created_at', '>=', $start->copy()->subHours(12))
                                ->get();
-        return response()->json(['success' => 'logs fetched', 'logs' => $logs]);
+
+        return response()->json([
+            'success' => 'logs fetched',
+            'logs' => $logs,
+            'counts' => PoolMetaLog::getCounts($start),
+        ]);
     }
 
     /**
@@ -53,9 +49,11 @@ class PoolMetaController extends Controller
         $lastLogId = $request->input('last_log_id');
         $logs = PoolMetaLog::where('id', '>', $lastLogId)
                            ->get();
+        $start = PoolMetaLog::getDurationStart($request->input('duration'));
         return response()->json([
             'success' => 'latest logs fetched',
             'latest_logs' => $logs,
+            'counts' => PoolMetaLog::getCounts($start),
         ]);
     }
 }

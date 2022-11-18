@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('pool_metas', function (Blueprint $table) {
+            $table->string('last_action', 8)->first()->nullable();
+        });
+        Schema::table('pool_meta_logs', function (Blueprint $table) {
+            $table->string('last_action', 8)->first()->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('pool_metas', function (Blueprint $table) {
+            $table->string('last_action', 8)->nullable();
+        });
+        Schema::table('pool_meta_logs', function (Blueprint $table) {
+            $table->string('last_action', 8)->nullable();
+        });
+    }
+};

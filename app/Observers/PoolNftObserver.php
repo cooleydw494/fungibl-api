@@ -74,6 +74,8 @@ class PoolNftObserver
             $updates['lowest_avg_reward'] = $newAvgReward;
         }
 
+        $updates['last_action'] = 'submit';
+
         PoolMeta::doUpdates($updates);
 //        PoolMeta::doIncrements($increments);
     }
@@ -148,6 +150,8 @@ class PoolNftObserver
         } elseif ($c['lowest_avg_reward'] === 0 || $newAvgReward < $c['lowest_avg_reward']) {
             $updates['lowest_avg_reward'] = $newAvgReward;
         }
+
+        $updates['last_action'] = 'pull';
 
         PoolMeta::doUpdates($updates);
     }

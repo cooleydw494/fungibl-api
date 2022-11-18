@@ -27,6 +27,7 @@ class PoolMetaObserver
     public function updated(PoolMeta $poolMeta): void
     {
         dispatch(new SavePoolMetaLog($poolMeta->get([
+            'last_action',
             'current_nft_count',
             'current_pool_value',
             'current_avg_reward',

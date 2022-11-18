@@ -88,7 +88,8 @@ class PoolMeta extends Model
      */
     public static function doUpdates(array $metas): bool
     {
-        return static::query()->limit(1)->update($metas);
+        $meta = static::query()->limit(1)->first();
+        return $meta->update($metas);
     }
 
     /**

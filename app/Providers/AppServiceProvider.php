@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\PoolMeta;
 use App\Models\PoolNft;
+use App\Observers\PoolMetaObserver;
 use App\Observers\PoolNftObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         PoolNft::observe(PoolNftObserver::class);
+        PoolMeta::observe(PoolMetaObserver::class);
     }
 }

@@ -29,10 +29,13 @@ class PoolMetaController extends Controller
     {
         $start = Carbon::now();
         $start = match ($request->input('duration')) {
+            '30m' => $start->subMinutes(30),
+            '1h' => $start->subHour(),
+            '12h' => $start->subHours(12),
             '1d' => $start->subDay(),
             '7d' => $start->subDays(7),
             '30d' => $start->subDays(30),
-            default => $start->subHour(),
+            default => $start->subDay(),
         };
         $logs = PoolMetaLog::where('created_at', '>=', $start)
                                ->get();

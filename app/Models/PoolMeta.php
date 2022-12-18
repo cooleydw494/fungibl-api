@@ -59,6 +59,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereStartingPullCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $last_action
+ * @property int $id
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMeta whereLastAction($value)
  */
 class PoolMeta extends Model
 {

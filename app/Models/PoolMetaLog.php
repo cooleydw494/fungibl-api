@@ -13,6 +13,56 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog query()
  * @mixin \Eloquent
+ * @property string|null $last_action
+ * @property int $id
+ * @property int $current_nft_count
+ * @property int $current_pool_value
+ * @property int $current_avg_reward
+ * @property int $current_pull_cost
+ * @property int $starting_nft_count
+ * @property int $starting_pool_value
+ * @property int $starting_avg_reward
+ * @property int $starting_pull_cost
+ * @property int $lowest_nft_count
+ * @property int $lowest_pool_value
+ * @property int $lowest_avg_reward
+ * @property int $lowest_pull_cost
+ * @property int $highest_nft_count
+ * @property int $highest_pool_value
+ * @property int $highest_avg_reward
+ * @property int $highest_pull_cost
+ * @property int $app_supply_fun
+ * @property int $circulating_supply_fun
+ * @property int $llc_supply_fun
+ * @property int $beta_supply_fun
+ * @property int $public_supply_fun
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereAppSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereBetaSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCirculatingSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCurrentAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCurrentNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCurrentPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereCurrentPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereHighestAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereHighestNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereHighestPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereHighestPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLastAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLlcSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLowestAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLowestNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLowestPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereLowestPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog wherePublicSupplyFun($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereStartingAvgReward($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereStartingNftCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereStartingPoolValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereStartingPullCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolMetaLog whereUpdatedAt($value)
  */
 class PoolMetaLog extends Model
 {

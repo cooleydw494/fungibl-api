@@ -70,6 +70,8 @@ use DB;
  * @method static \Illuminate\Database\Query\Builder|PoolNft withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PoolNft withoutTrashed()
  * @mixin \Eloquent
+ * @property int $cache_tries
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCacheTries($value)
  */
 class PoolNft extends Model
 {

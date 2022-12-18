@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Locker;
 use App\Traits\IsNftRecord;
+use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -90,36 +92,39 @@ class PoolNft extends Model
     public static function addToPool(array $nftData): PoolNft
     {
         $nft = Nft::syncFromFrontend(null, $nftData);
-        /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
         $tolerance = 10; // TODO: pass this in $nftData->tolerance from user
         // TODO: remove this, it is ONLY for minting testnet seeded NFT pool
         $frontendEstimate = $nftData['estimated_value'];
         $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
-        $submitReward = static::calculateReward($estimatedAlgo);
-        $submitIteration = (DB::table('pool_nfts')
-                             ->select('submit_iteration')
-                             ->where('asset_id', $nft->asset_id)
-                             ->latest()
-                             ->first()->submit_iteration ?? 0) + 1;
-        $poolNft = PoolNft::create([
-            ...$nft->only([
-                'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
-                'ipfs_image_url', 'image_cached', 'meta_standard', 'metadata',
-            ]),
-            'in_pool' => true,
-            'current_est_algo' => $estimatedAlgo,
-            'submit_est_algo' => $estimatedAlgo,
-            'submit_reward_fun' => $submitReward,
-            'submit_algorand_address' => $user->algorand_address,
-            'contract_info' => $nftData['contract_info'],
-            'submit_iteration' => $submitIteration,
-        ]);
+
+        $poolNft = Locker::doWithLock('pool',
+            static function () use ($estimatedAlgo, $nft, $nftData, $user) {
+            $submitReward = static::calculateReward($estimatedAlgo);
+            $submitIteration = (DB::table('pool_nfts')
+                                  ->select('submit_iteration')
+                                  ->where('asset_id', $nft->asset_id)
+                                  ->latest()
+                                  ->first()->submit_iteration ?? 0) + 1;
+            return PoolNft::create([
+                ...$nft->only([
+                    'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
+                    'ipfs_image_url', 'image_cached', 'meta_standard', 'metadata',
+                ]),
+                'in_pool' => true,
+                'current_est_algo' => $estimatedAlgo,
+                'submit_est_algo' => $estimatedAlgo,
+                'submit_reward_fun' => $submitReward,
+                'submit_algorand_address' => $user->algorand_address,
+                'contract_info' => $nftData['contract_info'],
+                'submit_iteration' => $submitIteration,
+            ]);
+        });
 
         Algorand::assetManager()->transfer(
             env('FUN_ASSET_ID'),
             Algorand::accountManager()->restoreAccount(json_decode(env('SEED'))),
-            $submitReward,
+            $poolNft->submit_reward_fun,
             Address::fromAlgorandAddress($user->algorand_address),
         );
 

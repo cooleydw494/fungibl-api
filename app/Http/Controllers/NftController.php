@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Oracle;
 use App\Models\Nft;
+use App\Models\PendingContract;
 use App\Models\PoolNft;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Auth;
 
 class NftController extends Controller
 {
@@ -41,12 +45,55 @@ class NftController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws GuzzleException
+     */
+    public function createSubmitContract(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        $nftAssetId = $request->input('nft_asset_id');
+        $existing = PendingContract::where('user_id', $user->id)
+                           ->where('asset_id', $nftAssetId)
+                           ->first();
+        if ($existing) {
+            $contractInfo = $existing->contract_info;
+        } else {
+            try {
+                $submitterAddress = $user->algorand_address;
+                $response = Oracle::createSubmitContract($nftAssetId, $submitterAddress);
+                $contractInfo = $response->contract_info ?? null;
+                if (is_null($contractInfo)) {
+                    $response = json_encode($response);
+                    throw new Exception("no contract info retrieved from Oracle. Response: $response");
+                }
+                PendingContract::create([
+                    'contract_info' => $contractInfo,
+                    'user_id' => $user->id,
+                    'nft_asset_id' => $nftAssetId,
+                ]);
+            } catch (\Exception $exception) {
+                info($exception->getMessage());
+                info($exception->getTraceAsString());
+                return response()->json(['error' => $exception->getMessage(),]);
+            }
+        }
+        return response()->json([
+            'success' => 'created Submit contract',
+            'ctc_info' => $contractInfo,
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
      */
     public function addToPool(Request $request): JsonResponse
     {
+        $finalizedReward = 0;
         foreach ($request->nfts as $nftData) {
             try {
-                $poolNfts[] = PoolNft::addToPool($nftData);
+                $poolNft = PoolNft::addToPool($nftData);
+                $finalizedReward += $poolNft->submit_reward_fun;
+                $poolNfts[] = $poolNft;
             } catch (Exception $exception) {
                 $exceptions[] = $exception;
                 info($exception->getMessage());
@@ -54,6 +101,7 @@ class NftController extends Controller
             }
         }
         return response()->json([
+            'finalized_reward' => $finalizedReward,
             'pool_nfts' => $poolNfts ?? null,
             'exceptions' => $exceptions ?? null,
         ]);

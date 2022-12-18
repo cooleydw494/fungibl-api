@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('nfts', function (Blueprint $table) {
-            $table->integer('asset_id')->primary();
+            $table->unsignedInteger('asset_id')->primary();
             $table->string('name', 60);
             $table->string('unit_name', 60);
             $table->string('collection_name', 60);

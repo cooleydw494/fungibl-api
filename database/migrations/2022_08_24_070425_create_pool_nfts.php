@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('pool_nfts', function (Blueprint $table) {
-            $table->integer('asset_id')->primary();
+            $table->unsignedInteger('asset_id')->primary();
             $table->string('name', 60);
             $table->string('unit_name', 60);
             $table->string('collection_name', 60);
@@ -24,14 +24,14 @@ return new class extends Migration
             $table->string('ipfs_image_url');
             $table->boolean('image_cached')->default(0)->nullable();
             $table->boolean('in_pool')->default(1);
-            $table->integer('current_est_algo');
-            $table->integer('submit_est_algo');
-            $table->integer('submit_reward_fun');
+            $table->unsignedInteger('current_est_algo');
+            $table->unsignedInteger('submit_est_algo');
+            $table->unsignedInteger('submit_reward_fun');
             $table->string('submit_algorand_address', 60);
-            $table->integer('submit_iteration')->default(1);
+            $table->unsignedInteger('submit_iteration')->default(1);
             $table->text('contract_info');
-            $table->integer('pull_est_algo')->nullable();
-            $table->integer('pull_cost_fun')->nullable();
+            $table->unsignedInteger('pull_est_algo')->nullable();
+            $table->unsignedInteger('pull_cost_fun')->nullable();
             $table->string('pull_algorand_address', 60)->nullable();
             $table->timestamp('pulled_at')->nullable();
             $table->timestamps();

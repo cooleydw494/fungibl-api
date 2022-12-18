@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('algorand_address', 60)->unique('users_algorand_address');
             $table->string('username', 32)->nullable()->unique('users_username');
             $table->string('nfd', 32)->unique('users_nfd')->nullable();
-            $table->integer('favorite_nft')->unique('users_favorite_nft')->nullable();
+            $table->unsignedInteger('favorite_nft')->unique('users_favorite_nft')->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('nonce', 16);

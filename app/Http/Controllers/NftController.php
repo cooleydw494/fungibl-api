@@ -88,10 +88,22 @@ class NftController extends Controller
      */
     public function addToPool(Request $request): JsonResponse
     {
+        $userId = Auth::user()->id;
         $finalizedReward = 0;
         foreach ($request->nfts as $nftData) {
             try {
+                // Only source the contract data we know WE created
+                $pendingContract = PendingContract::where('nft_asset_id', $nftData['asset_id'])
+                                                  ->where('user_id', $userId)
+                                                  ->first();
+                if (is_null($pendingContract)) {
+                    throw new Exception("No pending contract for ASA {$nftData['asset_id']}, user $userId");
+                }
+                $nftData['contract_info'] = $pendingContract->contract_info;
                 $poolNft = PoolNft::addToPool($nftData);
+                if (is_a($poolNft, PoolNft::class)) {
+                    $pendingContract->delete();
+                }
                 $finalizedReward += $poolNft->submit_reward_fun;
                 $poolNfts[] = $poolNft;
             } catch (Exception $exception) {

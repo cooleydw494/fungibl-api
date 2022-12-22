@@ -33,21 +33,43 @@ class Oracle {
 
     /**
      * Create a new contract for an NFT submission
-     * @param int    $nftAsaId
+     * @param int    $nftAssetId
      * @param string $submitterAddress
      * @return object|null
      * @throws GuzzleException
      */
-    public static function createSubmitContract(int $nftAsaId, string $submitterAddress): ?object
+    public static function createSubmitContract(int $nftAssetId, string $submitterAddress): ?object
     {
         $res = static::getClient()->post("create-contract", [
             'json' => [
-                'nft_asset_id' => $nftAsaId,
+                'nft_asset_id' => $nftAssetId,
                 'submitter_address' => $submitterAddress,
             ],
         ]);
         $content = json_decode($res->getBody()->getContents());
         return $content ?? null;
+    }
+
+    /**
+     * Check to see that the contract has the nft submitted by the correct submitter
+     *
+     * @param string $contractInfo
+     * @param int    $nftAssetId
+     * @param        $submitterAddress
+     * @return bool
+     * @throws GuzzleException
+     */
+    public static function verifyNftSubmission(string $contractInfo, int $nftAssetId, $submitterAddress): bool
+    {
+        $res = static::getClient()->post("verify-nft-submitted", [
+            'json' => [
+                'contract_info' => $contractInfo,
+                'nft_asset_id' => $nftAssetId,
+                'submitter_address' => $submitterAddress,
+            ],
+        ]);
+        $content = json_decode($res->getBody()->getContents());
+        return $content->nft_is_submitted ?? false;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Locker;
+use App\Helpers\Oracle;
 use App\Traits\IsNftRecord;
 use Auth;
 use Carbon\Carbon;
@@ -95,13 +96,20 @@ class PoolNft extends Model
     {
         $nft = Nft::syncFromFrontend(null, $nftData);
         $user = Auth::user();
-        $tolerance = 10; // TODO: pass this in $nftData->tolerance from user
-        // TODO: remove this, it is ONLY for minting testnet seeded NFT pool
-        $frontendEstimate = $nftData['estimated_value'];
-        $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
 
-        $poolNft = Locker::doWithLock('pool',
-            static function () use ($estimatedAlgo, $nft, $nftData, $user) {
+        $poolNft = Locker::doWithLock('pool', static function () use ($nft, $nftData, $user) {
+            $tolerance = 10; // TODO: pass this in $nftData->tolerance from user
+            $frontendEstimate = $nftData['estimated_value'];
+            $estimatedAlgo = $nft->estimateValue($frontendEstimate, $tolerance);
+            $contractInfo = $nftData['contract_info'];
+            $nftSubmitted = Oracle::verifyNftSubmission(
+                $contractInfo,
+                $nft->asset_id,
+                $user->algorand_address
+            );
+            if (!$nftSubmitted) {
+                throw new Exception('NFT was not submitted to pending contract yet or user is not correct. $nftData => ' . json_encode($nftData));
+            }
             $submitReward = static::calculateReward($estimatedAlgo);
             $submitIteration = (DB::table('pool_nfts')
                                   ->select('submit_iteration')
@@ -118,7 +126,7 @@ class PoolNft extends Model
                 'submit_est_algo' => $estimatedAlgo,
                 'submit_reward_fun' => $submitReward,
                 'submit_algorand_address' => $user->algorand_address,
-                'contract_info' => $nftData['contract_info'],
+                'contract_info' => $contractInfo,
                 'submit_iteration' => $submitIteration,
             ]);
         });

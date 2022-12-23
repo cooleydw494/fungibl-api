@@ -29,6 +29,7 @@ Route::middleware('auth:api')->group(static function () {
     Route::post('nfts/{assetId}/cache-image', 'App\Http\Controllers\NftController@cacheImage');
     Route::post('nfts/add-to-pool', 'App\Http\Controllers\NftController@addToPool');
     Route::post('create-submit-contract', 'App\Http\Controllers\NftController@createSubmitContract');
+    Route::post('set-puller', 'App\Http\Controllers\NftController@setPuller');
     Route::get('random-contract-info', 'App\Http\Controllers\NftController@randomContractInfo');
 //    Route::post('nfts/{assetId}/pulled', 'App\Http\Controllers\NftController@markPulled');
 });

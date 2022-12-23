@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\PoolNft;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -66,6 +67,19 @@ class Oracle {
                 'contract_info' => $contractInfo,
                 'nft_asset_id' => $nftAssetId,
                 'submitter_address' => $submitterAddress,
+            ],
+        ]);
+        $content = json_decode($res->getBody()->getContents());
+        return $content->nft_is_submitted ?? false;
+    }
+
+    public function setPullerDetails(PoolNft $poolNft)
+    {
+        $res = static::getClient()->post("set-puller", [
+            'json' => [
+                'contract_info' => $poolNft->contract_info,
+                'nft_asset_id' => $poolNft->asset_id,
+                'submitter_address' => \Auth::user()->algorand_address,
             ],
         ]);
         $content = json_decode($res->getBody()->getContents());

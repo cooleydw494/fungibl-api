@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Locker;
 use App\Helpers\Oracle;
 use App\Models\Nft;
 use App\Models\PendingContract;
@@ -125,9 +126,14 @@ class NftController extends Controller
      */
     public function randomContractInfo(Request $request): JsonResponse
     {
-        /** @var PoolNft $poolNft */
-        $poolNft = PoolNft::inRandomOrder()->first();
-        $poolNft->markPulled();
+        $poolNft = Locker::doWithLock('pool', static function () use ($request) {
+            /** @var PoolNft $poolNft */
+            $poolNft = PoolNft::inRandomOrder()->first();
+            $poolNft->markPulled();
+            $successful = Oracle::setPullerDetails($poolNft);
+            return $poolNft;
+        });
+
         return response()->json([
             'success' => ':)',
             'contract_info' => $poolNft->contract_info,

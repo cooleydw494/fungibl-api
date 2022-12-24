@@ -16,6 +16,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|PendingContract withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PendingContract withoutTrashed()
  * @mixin \Eloquent
+ * @property int $id
+ * @property int $nft_asset_id
+ * @property int $user_id
+ * @property string $contract_info
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereContractInfo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereNftAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PendingContract whereUserId($value)
  */
 class PendingContract extends Model
 {

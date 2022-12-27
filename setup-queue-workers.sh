@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Install supervisor
-sudo apt-get install supervisor
+sudo apt-get update
+sudo apt-get install -y supervisor
+
+# create log file
+touch /www/fungibl-api/storage/logs/worker.log
 
 # Create the configuration file for the queue worker
 echo "[program:fungibl-worker]
@@ -16,9 +20,10 @@ stdout_logfile=/www/fungibl-api/worker.log" > /etc/supervisor/conf.d/fungibl-wor
 
 # Tell supervisor to read the new configuration file
 sudo supervisorctl reread
+sudo supervisorctl update
 
 # Start the queue worker
 sudo supervisorctl start fungibl-worker
 
 # Add the babysitting script to the crontab to run every minute
-(crontab -l 2>/dev/null; echo "* * * * * /www/fungibl-api/babysit-queue-workers.sh") | crontab -
+(sudo crontab -l 2>/dev/null; echo "* * * * * /www/fungibl-api/babysit-queue-workers.sh") | sudo crontab -

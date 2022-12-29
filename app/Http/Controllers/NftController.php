@@ -53,7 +53,7 @@ class NftController extends Controller
         $user = Auth::user();
         $nftAssetId = $request->input('nft_asset_id');
         $existing = PendingContract::where('user_id', $user->id)
-                           ->where('asset_id', $nftAssetId)
+                           ->where('nft_asset_id', $nftAssetId)
                            ->first();
         if ($existing) {
             $contractInfo = $existing->contract_info;

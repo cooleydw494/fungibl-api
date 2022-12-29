@@ -24,7 +24,7 @@ class Oracle {
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'token' => config('services.oracle.api_key'),
+                    'Authorization' => 'Bearer ' . config('services.oracle.api_key'),
                 ],
                 'base_uri' => config('services.oracle.api_url'),
             ]);

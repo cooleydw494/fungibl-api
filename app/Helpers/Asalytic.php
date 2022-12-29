@@ -48,7 +48,7 @@ class Asalytic {
      */
     public static function estimatedPrice(int $asaId): ?object
     {
-        $res = static::getClient()->get("asas/$asaId/estimatedPrice");
+        $res = static::getClient()->get("asa/$asaId/priceEstimate");
         $content = json_decode($res->getBody()->getContents());
         return $content ?? null;
     }
@@ -69,7 +69,7 @@ class Asalytic {
     public static function collectionEstimateData(string $collectionName): object
     {
         $res = static::getClient()
-                     ->get("collections/$collectionName/estimatedPrice");
+                     ->get("collection/$collectionName/priceEstimate");
         $content = json_decode($res->getBody()->getContents());
         return $content;
     }
@@ -106,12 +106,10 @@ class Asalytic {
      */
     public static function salesFor(string $collectionName, ?array $traits = null): array
     {
-        if (is_null($traits)) {
-            $url = "collections/$collectionName/sales";
-        } else {
-            $url = "collections/$collectionName/traitSales?";
+        $url = "collection/$collectionName/sales?sortType=timeHighToLow";
+        if (! is_null($traits)) {
             $traitTypesAndValues = static::parseTraitTypesAndValues($traits);
-            $url .= $traitTypesAndValues;
+            $url .= "&$traitTypesAndValues";
         }
         $res = static::getClient()->get($url);
         $content = json_decode($res->getBody()->getContents());
@@ -156,12 +154,10 @@ class Asalytic {
      */
     public static function listingsFor(string $collectionName, ?array $traits = null): array
     {
-        if (is_null($traits)) {
-            $url = "collections/$collectionName/marketListings";
-        } else {
-            $url = "collections/$collectionName/marketTraitListings?";
+        $url = "collection/$collectionName/listings?sortType=timeHighToLow";
+        if (! is_null($traits)) {
             $traitTypesAndValues = static::parseTraitTypesAndValues($traits);
-            $url .= $traitTypesAndValues;
+            $url .= "&$traitTypesAndValues";
         }
         $res = static::getClient()->get($url);
         $content = json_decode($res->getBody()->getContents());

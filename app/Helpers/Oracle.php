@@ -73,13 +73,18 @@ class Oracle {
         return $content->nft_is_submitted ?? false;
     }
 
-    public function setPullerDetails(PoolNft $poolNft)
+    /**
+     * @param PoolNft $poolNft
+     * @return false
+     * @throws GuzzleException
+     */
+    public static function setPullerDetails(PoolNft $poolNft): bool
     {
         $res = static::getClient()->post("set-puller", [
             'json' => [
                 'contract_info' => $poolNft->contract_info,
                 'nft_asset_id' => $poolNft->asset_id,
-                'submitter_address' => \Auth::user()->algorand_address,
+                'puller_address' => $poolNft->pull_algorand_address,
             ],
         ]);
         $content = json_decode($res->getBody()->getContents());

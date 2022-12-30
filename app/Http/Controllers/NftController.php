@@ -61,11 +61,12 @@ class NftController extends Controller
             try {
                 $submitterAddress = $user->algorand_address;
                 $response = Oracle::createSubmitContract($nftAssetId, $submitterAddress);
-                $contractInfo = $response->contract_info ?? null;
+                $contractInfo = $response->ctc_info ?? null;
                 if (is_null($contractInfo)) {
                     $response = json_encode($response);
                     throw new Exception("no contract info retrieved from Oracle. Response: $response");
                 }
+                $contractInfo = json_encode($contractInfo);
                 PendingContract::create([
                     'contract_info' => $contractInfo,
                     'user_id' => $user->id,
@@ -94,11 +95,11 @@ class NftController extends Controller
         foreach ($request->nfts as $nftData) {
             try {
                 // Only source the contract data we know WE created
-                $pendingContract = PendingContract::where('nft_asset_id', $nftData['asset_id'])
+                $pendingContract = PendingContract::where('nft_asset_id', $nftData['asset-id'])
                                                   ->where('user_id', $userId)
                                                   ->first();
                 if (is_null($pendingContract)) {
-                    throw new Exception("No pending contract for ASA {$nftData['asset_id']}, user $userId");
+                    throw new Exception("No pending contract for ASA {$nftData['asset-id']}, user $userId");
                 }
                 $nftData['contract_info'] = $pendingContract->contract_info;
                 $poolNft = PoolNft::addToPool($nftData);
@@ -129,6 +130,9 @@ class NftController extends Controller
         $poolNft = Locker::doWithLock('pool', static function () use ($request) {
             /** @var PoolNft $poolNft */
             $poolNft = PoolNft::inRandomOrder()->first();
+            if (is_null($poolNft)) {
+                throw new \Exception('**HIGH!**ALERT!** No random NFTs in pool to pull.');
+            }
             $poolNft->markPulled();
             $successful = Oracle::setPullerDetails($poolNft);
             return $poolNft;

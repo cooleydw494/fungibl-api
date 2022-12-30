@@ -151,6 +151,7 @@ class PoolNft extends Model
             'in_pool' => false,
             'pull_est_algo' => $this->submit_est_algo,
             'pull_cost_fun' => self::calculatePullCost(),
+            'pull_algorand_address' => Auth::user()->algorand_address,
             'pulled_at' => Carbon::now(),
         ]);
         $this->delete();

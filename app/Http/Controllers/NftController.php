@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Asalytic;
 use App\Helpers\Locker;
 use App\Helpers\Oracle;
 use App\Models\Nft;
@@ -24,7 +25,8 @@ class NftController extends Controller
      */
     public function sync(Request $request): JsonResponse
     {
-        foreach ($request->nfts as $nftData) {
+        $nftsData = Asalytic::getAsaInfo($request->input('nft_ids'));
+        foreach ($nftsData as $nftData) {
             try {
                 $nft = Nft::syncFromFrontend(null, $nftData);
                 ($nft->image_cached && $nft->cache_tries < 3)
@@ -34,12 +36,8 @@ class NftController extends Controller
                 info($exception->getTraceAsString());
             }
         }
-        // NOTE: addToPool call here is for connecting the Fungibl App wallet
-        //       for initialization of the pool. That's all. Never again.
-//        $addToPoolResponse = $this->addToPool($request);
         return response()->json([
             'success' => ':)', 'needs_caching' => $needsCaching ?? [],
-//            'add_to_pool_response' => $addToPoolResponse,
         ]);
     }
 

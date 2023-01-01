@@ -32,6 +32,23 @@ class Asalytic {
     }
 
     /**
+     * @param array       $asaIds
+     * @param string|null $view 'full' or 'basic'
+     * @param string|null $sortType 'creationTime'||'rank'.'HighToLow'||'LowToHigh'
+     * @return object|null
+     * @throws GuzzleException
+     */
+    public static function getAsaInfo(array $asaIds, ?string $view = 'full',
+                               ?string $sortType = 'creationTimeHighToLow'): ?object
+    {
+        $asaIds = "asaIDs=" . implode(',', $asaIds);
+        $sortType = "&sortType=$sortType";
+        $res = static::getClient()->get("asas?$asaIds&view=$view$sortType");
+        $content = json_decode($res->getBody()->getContents());
+        return $content ?? null;
+    }
+
+    /**
      * Get the Asalytic estimated price of an ASA
      *
      * returns object {

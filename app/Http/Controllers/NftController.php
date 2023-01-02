@@ -25,10 +25,22 @@ class NftController extends Controller
      */
     public function sync(Request $request): JsonResponse
     {
-        $nftsData = Asalytic::getAsaInfo($request->input('nft_ids'));
+        $nftLookups = $request->input('nft_lookups');
+        $isProd = env('APP_ENV') === 'production';
+        if ($isProd) {
+            $nftIds = array_column($nftLookups, 'asset_id');
+            $nftsData = Asalytic::getAsaInfo($nftIds);
+        } else {
+            $nftsData = $nftLookups;
+        }
         foreach ($nftsData as $nftData) {
+            if (!$isProd && is_null($nftData['mainnet_asset_id'] ?? null)) {
+                continue; // These don't exist. "real" testnet nfts only!
+            }
             try {
-                $nft = Nft::syncFromFrontend(null, $nftData);
+                $nft = $isProd
+                    ? Nft::syncFromAsalytic($nftData)
+                    : Nft::syncFromAlgod($nftData);
                 ($nft->image_cached && $nft->cache_tries < 3)
                     ?: $needsCaching[] = $nft->asset_id;
             } catch (Exception $exception) {

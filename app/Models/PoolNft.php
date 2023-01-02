@@ -94,7 +94,7 @@ class PoolNft extends Model
      */
     public static function addToPool(array $nftData): PoolNft
     {
-        $nft = Nft::syncFromFrontend(null, $nftData);
+        $nft = Nft::syncFromAlgod($nftData);
         $user = Auth::user();
 
         $poolNft = Locker::doWithLock('pool', static function () use ($nft, $nftData, $user) {

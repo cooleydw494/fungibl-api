@@ -39,13 +39,27 @@ class Asalytic {
      * @throws GuzzleException
      */
     public static function getAsaInfo(array $asaIds, ?string $view = 'full',
-                               ?string $sortType = 'creationTimeHighToLow'): ?object
+                               ?string $sortType = 'creationTimeHighToLow'): ?array
     {
-        $asaIds = "asaIDs=" . implode(',', $asaIds);
+        $asaIds = "asaIDs=" . urlencode(implode(',', $asaIds));
         $sortType = "&sortType=$sortType";
         $res = static::getClient()->get("asas?$asaIds&view=$view$sortType");
         $content = json_decode($res->getBody()->getContents());
         return $content ?? null;
+    }
+
+    /**
+     * @param array $nftsInfo
+     * @return object|null
+     */
+    public static function getTestAsaInfo(array $nftsInfo): ?object
+    {
+        // Let's just not even deal with those that aren't mainnet fakes
+        $nftsInfo = [];
+
+        foreach ($array as $item) {
+            $obj[$item['id']] = $item;
+        }
     }
 
     /**

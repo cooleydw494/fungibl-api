@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Helpers\Asalytic;
 use App\Traits\IsNftRecord;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,39 +51,75 @@ class Nft extends Model
     protected $guarded = [];
 
     /**
+     * Use data from Algod to populate testnet NFTs (expects faker metadata)
+     *
+     * @param array|null $nftData
+     * @return Nft
+     * @throws Exception
+     */
+    public static function syncFromAlgod(array $nftData): static
+    {
+        /** @var static|null $nft */
+        $nft = static::find($nftData['asset-id']);
+        $newNft = is_null($nft);
+        if ($newNft) {
+            /** @var static $nft */
+            $collectionName = preg_replace('/[0-9]/', '', $nftData['properties']['mainnet_unit_name'] ?? 'Nunyaz');
+            $nft = static::create([
+                'asset_id' => $nftData['asset-id'],
+                'unit_name' => $nftData['params']['unit-name'],
+                'name' => $nftData['params']['name'],
+                'collection_name' => $collectionName,
+                'creator_name' => 'Imposter',
+                'creator_wallet' => $nftData['params']['creator'],
+                'reserve_wallet' => $nftData['params']['reserve'],
+                'meta_standard' => $nftData['metadata_standard'],
+                'metadata' => $nftData['metadata'],
+                'total_supply' => 420,
+                'rarity_rank' => 69,
+                'ipfs_image_url' => $nftData['imageUrl'],
+                'image_cached' => false,
+            ]);
+        }
+        // We don't need to handle any updating for fake NFTs
+        return $nft;
+    }
+
+    /**
      * @param Nft|null   $nft
      * @param array|null $nftData
      * @return Nft
      * @throws Exception
      */
-    public static function syncFromFrontend(
-        ?Nft $nft = null,
-        ?array $nftData = null
-    ): static
+    public static function syncFromAsalytic(object $nftData): static
     {
-        // If neither are passed in, throw exception
-        $passedNft = ! is_null($nft);
-        $passedNftData = ! is_null($nftData);
-        if (!$passedNft && !$passedNftData) {
-            throw new Exception(
-                'syncFromFrontend cannot be called without nftData or nft set'
-            );
-        }
-
         /** @var static|null $nft */
-        $nft = $passedNft ? $nft : static::find($nftData['asset-id']);
+        $nft = static::find($nftData->asa_id);
         $newNft = is_null($nft);
 
         if ($newNft) {
+            $metaStandard = 'none';
+            if (! is_null($nftData->arc3_metadata))
+                $metaStandard = 'arc3';
+            if (! is_null($nftData->arc69_metadata)) {
+                $metaStandard = 'arc69';
+            }
+            if (! is_null($nftData->arc19_metadata)) {
+                $metaStandard = 'arc19';
+            }
             /** @var static $nft */
             $nft = static::create([
-                'asset_id' => $nftData['asset-id'],
-                'name' => $nftData['params']['name'],
-                'unit_name' => $nftData['params']['unit-name'],
-                'collection_name' => 'TODO:collection_name',
-                'creator_wallet' => $nftData['params']['creator'],
-                'meta_standard' => 'TODO:ms', // TODO
-                'metadata' => 'TODO:metadata', // TODO
+                'asset_id' => $nftData->asa_id,
+                'unit_name' => $nftData->unit_name,
+                'name' => $nftData->name,
+                'collection_name' => $nftData->collection_id,
+                'creator_name' => $nftData->creator_id,
+                'creator_wallet' => $nftData->creator,
+                'reserve_wallet' => $nftData->reserve,
+                'meta_standard' => $metaStandard,
+                'metadata' => $nftData->metadata,
+                'total_supply' => $nftData->rarity->total ?? null,
+                'rarity_rank' => $nftData->rarity->rank ?? null,
                 'ipfs_image_url' => $nftData['imageUrl'],
                 'image_cached' => false,
             ]);

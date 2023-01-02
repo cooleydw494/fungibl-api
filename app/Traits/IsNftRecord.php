@@ -19,6 +19,25 @@ trait IsNftRecord {
     }
 
     /**
+     * @return array|null
+     */
+    public function getFakeMainnetDataAttribute(): ?array
+    {
+        if (env('APP_ENV') === 'production') {
+            return null;
+        }
+        $metadata = json_decode($this->metadata);
+        if (is_null($metadata->properties['mainnet_asset_id'] ?? null)) {
+            return null;
+        }
+        return [
+            'asset_id' => $metadata->properties['mainnet_asset_id'],
+            'unit_name' => $metadata->properties['mainnet_unit_name'],
+            'asset_name' => $metadata->properties['mainnet_asset_name'],
+        ];
+    }
+
+    /**
      * @return false|string
      */
     public function cacheImage(): bool|string

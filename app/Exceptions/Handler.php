@@ -55,16 +55,12 @@ class Handler extends ExceptionHandler
 
     public function report(Exception|Throwable $e)
     {
-        Log::error("yep");
         $request = request();
         /** @var User $user */
         $user = auth()->user();
-        Log::error('yep2');
         $userInfo = is_null($user) ? ['no current user' => 'really'] : $user->toArray();
-        Log::error('yep3');
         $ipAddress = $request->ip() ?? 'N/A';
         $xForwardedFor = $request->header('X-Forwarded-For') ?? 'N/A';
-        Log::error('yep4');
         $subject = 'Fungibl Exception: ' . $e->getMessage();
         $data = ['subject' => $subject, 'exception' => $e,];
         $data['email_vars'] = [
@@ -72,7 +68,6 @@ class Handler extends ExceptionHandler
             'ipAddress' => $ipAddress,
             'xForwardedFor' => $xForwardedFor,
         ];
-        Log::error('yep5');
         Log::error($e->getMessage(), $data['email_vars']);
         $data['email_vars']['exception'] = $e; // no need to log this here
 //        Mail::to('david+exceptions@fungibl.fun')

@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Exceptions\EstimatedValueException;
+use App\Exceptions\Handler;
+use App\Helpers\Asalytic;
 use App\Traits\IsNftRecord;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,6 +44,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUnitName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nft whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $creator_name
+ * @property string $reserve_wallet
+ * @property int $total_supply
+ * @property int $rarity_rank
+ * @property-read array|null $fake_mainnet_data
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereCreatorName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereRarityRank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereReserveWallet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Nft whereTotalSupply($value)
  */
 class Nft extends Model
 {
@@ -60,13 +73,28 @@ class Nft extends Model
     public static function syncFromAlgod(array $nftData): static
     {
         /** @var static|null $nft */
-        $nft = static::find($nftData['asset-id']);
+        $nft = static::find($nftData['asset_id']);
         $newNft = is_null($nft);
         if ($newNft) {
             /** @var static $nft */
             $collectionName = preg_replace('/[0-9]/', '', $nftData['properties']['mainnet_unit_name'] ?? 'Nunyaz');
+//            info(json_encode([
+//                'asset_id' => $nftData['asset_id'],
+//                'unit_name' => $nftData['params']['unit-name'],
+//                'name' => $nftData['params']['name'],
+//                'collection_name' => $collectionName,
+//                'creator_name' => 'Imposter',
+//                'creator_wallet' => $nftData['params']['creator'],
+//                'reserve_wallet' => $nftData['params']['reserve'],
+//                'meta_standard' => $nftData['metadata_standard'],
+//                'metadata' => $nftData['metadata'],
+//                'total_supply' => 420,
+//                'rarity_rank' => 69,
+//                'ipfs_image_url' => $nftData['imageUrl'],
+//                'image_cached' => false,
+//            ]));
             $nft = static::create([
-                'asset_id' => $nftData['asset-id'],
+                'asset_id' => $nftData['asset_id'],
                 'unit_name' => $nftData['params']['unit-name'],
                 'name' => $nftData['params']['name'],
                 'collection_name' => $collectionName,
@@ -74,7 +102,7 @@ class Nft extends Model
                 'creator_wallet' => $nftData['params']['creator'],
                 'reserve_wallet' => $nftData['params']['reserve'],
                 'meta_standard' => $nftData['metadata_standard'],
-                'metadata' => $nftData['metadata'],
+                'metadata' => json_encode($nftData['metadata']),
                 'total_supply' => 420,
                 'rarity_rank' => 69,
                 'ipfs_image_url' => $nftData['imageUrl'],
@@ -151,26 +179,29 @@ class Nft extends Model
      * @param int|null $previousEstimate
      * @param int|null   $tolerance
      * @return float|bool
+     * @throws EstimatedValueException
      */
     public function estimateValue(
         ?int $previousEstimate = null,
         ?int $tolerance = 10
     ): int|bool
     {
-        $currentEstimate = $previousEstimate; // TODO: replace with below when ready
-//        try {
-//            $currentEstimate = Asalytic::estimatedPrice($this->asset_id)
-//                    ->price_estimate ?? 0;
-//        } catch (GuzzleException $exception) {
-//            info('Guzzle Exception in estimateValue: ' . $exception->getMessage());
-//            info($exception->getTraceAsString());
-//            $currentEstimate = $previousEstimate;
-//        }
-        if (is_null($previousEstimate)) {
-            return $currentEstimate;
+        $assetId = $this->asset_id;
+        if (env('APP_ENV') !== 'production') {
+            $assetId = $this->fake_mainnet_data['asset_id'] ?? $this->asset_id;
         }
-        if (abs($previousEstimate/$currentEstimate) > $tolerance) {
-            return false;
+        try {
+            $currentEstimate = Asalytic::estimatedPrice($assetId)
+                ->estimated_price ?? 0;
+        } catch (GuzzleException $exception) {
+            $message = 'There was an error communicating with Asalytic';
+            throw new EstimatedValueException($message, $exception->getCode(), $exception);
+        }
+        if ($currentEstimate < 5) {
+            throw new EstimatedValueException('NFT estimated value too low');
+        }
+        if (! is_null($previousEstimate) && abs($previousEstimate/$currentEstimate) > $tolerance) {
+            throw new EstimatedValueException("Estimate delta is higher than $tolerance%");
         }
         // We always round down on estimates/rewards, we like to keep things
         // neat and this defaults in favor of $FUN holders.

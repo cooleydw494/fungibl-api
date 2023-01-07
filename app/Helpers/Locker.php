@@ -2,11 +2,11 @@
 
 namespace App\Helpers;
 
+use App\Exceptions\LockerException;
 use Auth;
 use Carbon\Carbon;
 use Closure;
 use DB;
-use Log;
 
 class Locker {
     /**
@@ -15,6 +15,7 @@ class Locker {
      * @param int|null   $seconds
      * @param float|null $interval
      * @return mixed
+     * @throws LockerException
      */
     public static function doWithLock(string $name,
                                       Closure $callback,
@@ -49,14 +50,12 @@ class Locker {
                 sleep($interval);
             }
         } catch (\Exception $e) {
-            $exception = $e;
+            DB::table('locks')->where('id', $position)->delete();
+            throw new LockerException('Exception while executing locked operation', $e->getCode(), $e);
         }
         DB::table('locks')->where('id', $position)->delete();
-        if (! is_null($exception)) {
-            throw $exception;
-        }
         if (! $done) {
-            throw new \Exception('Could not execute actions which require a lock handle');
+            throw new LockerException('Could not execute actions which require a lock handle');
         }
         return $callBackReturn;
     }

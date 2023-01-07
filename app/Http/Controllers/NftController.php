@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CriticalPoolException;
+use App\Exceptions\EstimatedValueException;
+use App\Exceptions\LockerException;
 use App\Helpers\Asalytic;
 use App\Helpers\Locker;
 use App\Helpers\Oracle;
@@ -26,6 +29,8 @@ class NftController extends Controller
     public function sync(Request $request): JsonResponse
     {
         $nftLookups = $request->input('nft_lookups');
+        $nfts = [];
+        $dontSync = [];
         $isProd = env('APP_ENV') === 'production';
         if ($isProd) {
             $nftIds = array_column($nftLookups, 'asset_id');
@@ -35,12 +40,15 @@ class NftController extends Controller
         }
         foreach ($nftsData as $nftData) {
             if (!$isProd && is_null($nftData['mainnet_asset_id'] ?? null)) {
+                $dontSync[] = $nftData['asset_id'];
                 continue; // These don't exist. "real" testnet nfts only!
             }
             try {
                 $nft = $isProd
                     ? Nft::syncFromAsalytic($nftData)
                     : Nft::syncFromAlgod($nftData);
+                $nft->append('fake_mainnet_data');
+                $nfts[] = $nft;
                 ($nft->image_cached && $nft->cache_tries < 3)
                     ?: $needsCaching[] = $nft->asset_id;
             } catch (Exception $exception) {
@@ -49,7 +57,7 @@ class NftController extends Controller
             }
         }
         return response()->json([
-            'success' => ':)', 'needs_caching' => $needsCaching ?? [],
+            'success' => ':)', 'needs_caching' => $needsCaching ?? [], 'nfts' => $nfts, 'dont_sync' => $dontSync,
         ]);
     }
 
@@ -98,18 +106,18 @@ class NftController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function addToPool(Request $request): JsonResponse
+    public function  addToPool(Request $request): JsonResponse
     {
         $userId = Auth::user()->id;
         $finalizedReward = 0;
         foreach ($request->nfts as $nftData) {
             try {
                 // Only source the contract data we know WE created
-                $pendingContract = PendingContract::where('nft_asset_id', $nftData['asset-id'])
+                $pendingContract = PendingContract::where('nft_asset_id', $nftData['asset_id'])
                                                   ->where('user_id', $userId)
                                                   ->first();
                 if (is_null($pendingContract)) {
-                    throw new Exception("No pending contract for ASA {$nftData['asset-id']}, user $userId");
+                    throw new Exception("No pending contract for ASA {$nftData['asset_id']}, user $userId");
                 }
                 $nftData['contract_info'] = $pendingContract->contract_info;
                 $poolNft = PoolNft::addToPool($nftData);
@@ -137,23 +145,60 @@ class NftController extends Controller
      */
     public function randomContractInfo(Request $request): JsonResponse
     {
-        $poolNft = Locker::doWithLock('pool', static function () use ($request) {
-            /** @var PoolNft $poolNft */
-            $poolNft = PoolNft::inRandomOrder()->first();
-            if (is_null($poolNft)) {
-                throw new \Exception('**HIGH!**ALERT!** No random NFTs in pool to pull.');
-            }
-            $poolNft->markPulled();
-            $successful = Oracle::setPullerDetails($poolNft);
-            return $poolNft;
-        });
+        try {
+            $poolNft = Locker::doWithLock('pool', static function () use ($request) {
+                /** @var PoolNft $poolNft */
+                $poolNft = PoolNft::inRandomOrder()->first();
+                if (is_null($poolNft)) {
+                    throw new CriticalPoolException('No NFTs in the pool (this is bad).');
+                }
+                $poolNft->markPulled();
+                $successful = Oracle::setPullerDetails($poolNft);
+                return $poolNft;
+            });
+        } catch (CriticalPoolException $exception) {
+            // TODO: send a critical alert
+            return response()->json(['error' => $exception->getMessage()]);
+        } catch (LockerException $exception) {
+            return response()->json(['error' => $exception->getMessage()]);
+        }
+
+        if (env('APP_ENV') !== 'production') {
+            $poolNft->append('fake_mainnet_data');
+        }
 
         return response()->json([
             'success' => ':)',
-            'contract_info' => $poolNft->contract_info,
-            'finalized_pull_cost' => $poolNft->pull_cost_fun,
-            'opt_in_token' => $poolNft->asset_id,
+            'nft' => $poolNft,
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function featuredNftInfo(Request $request): JsonResponse
+    {
+        /** @var PoolNft $poolNft */
+        $poolNft = PoolNft::inRandomOrder()->first();
+        $name = $poolNft->fake_mainnet_data['unit_name'] ?? $poolNft->unit_name;
+
+        return response()->json([
+            'success' => 'Retrieved featured pool nft info',
+            'asset_id' => $poolNft->asset_id,
+            'fake_asset_id' => $poolNft->fake_mainnet_data['asset_id'],
+            'name' => $name,
+        ]);
+    }
+
+    public function getEstimate(Request $request, Nft $nft): JsonResponse
+    {
+        try {
+            $estimate = $nft->estimateValue();
+        } catch (EstimatedValueException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 400);
+        }
+        return response()->json(['success' => 'Estimated value calculated', 'estimated_value' => $estimate]);
     }
 
     // TODO: will probably need to split this off when implementing a secure way of pulling

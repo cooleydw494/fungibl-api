@@ -73,6 +73,15 @@ use DB;
  * @mixin \Eloquent
  * @property int $cache_tries
  * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCacheTries($value)
+ * @property string $creator_name
+ * @property string $reserve_wallet
+ * @property int $total_supply
+ * @property int $rarity_rank
+ * @property-read array|null $fake_mainnet_data
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereCreatorName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereRarityRank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereReserveWallet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PoolNft whereTotalSupply($value)
  */
 class PoolNft extends Model
 {
@@ -120,6 +129,7 @@ class PoolNft extends Model
                 ...$nft->only([
                     'asset_id', 'name', 'creator_wallet', 'unit_name', 'collection_name',
                     'ipfs_image_url', 'image_cached', 'meta_standard', 'metadata',
+                    'creator_name', 'reserve_wallet', 'rarity_rank', 'total_supply',
                 ]),
                 'in_pool' => true,
                 'current_est_algo' => $estimatedAlgo,

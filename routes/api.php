@@ -23,7 +23,7 @@ Route::post('process-contact-form', 'App\Http\Controllers\MarketingController@pr
 
 Route::middleware('auth:api')->group(static function () {
     Route::get('whoami', 'App\Http\Controllers\AuthController@whoami');
-
+    Route::post('update-nfd-info', 'App\Http\Controllers\UserController@updateNfdInfo');
 
     Route::post('nfts/sync', 'App\Http\Controllers\NftController@sync');
     Route::post('nfts/{assetId}/cache-image', 'App\Http\Controllers\NftController@cacheImage');
@@ -31,5 +31,8 @@ Route::middleware('auth:api')->group(static function () {
     Route::post('create-submit-contract', 'App\Http\Controllers\NftController@createSubmitContract');
     Route::post('set-puller', 'App\Http\Controllers\NftController@setPuller');
     Route::post('random-contract-info', 'App\Http\Controllers\NftController@randomContractInfo');
+    Route::get('featured-nft-info', 'App\Http\Controllers\NftController@featuredNftInfo');
 //    Route::post('nfts/{assetId}/pulled', 'App\Http\Controllers\NftController@markPulled');
+
+    Route::get('estimate/{nft}', 'App\Http\Controllers\NftController@getEstimate');
 });

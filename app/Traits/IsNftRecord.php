@@ -27,13 +27,13 @@ trait IsNftRecord {
             return null;
         }
         $metadata = json_decode($this->metadata);
-        if (is_null($metadata->properties['mainnet_asset_id'] ?? null)) {
+        if (is_null($metadata->properties->mainnet_asset_id ?? null)) {
             return null;
         }
         return [
-            'asset_id' => $metadata->properties['mainnet_asset_id'],
-            'unit_name' => $metadata->properties['mainnet_unit_name'],
-            'asset_name' => $metadata->properties['mainnet_asset_name'],
+            'asset_id' => $metadata->properties->mainnet_asset_id,
+            'unit_name' => $metadata->properties->mainnet_unit_name,
+            'asset_name' => $metadata->properties->mainnet_asset_name,
         ];
     }
 
